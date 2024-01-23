@@ -18,7 +18,7 @@ let controls;
 let objToRender = 'ship'
 const loader = new GLTFLoader();
 
-loader.load(('static/3DModels/ufo.glb'), function(gltf){
+loader.load(('static/3DModels/scene.gltf'), function(gltf){
     object = gltf.scene;
     console.log(object);
     scene.add(gltf.scene);
