@@ -20,7 +20,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.getElementById('container3D').appendChild(renderer.domElement);
 const loader = new GLTFLoader();
-loader.load(('static/3DModels/ufo.glb'),
+loader.load(('static/3DModels/sci-fi/scene.gltf'),
     function (gltf) {
         object = gltf.scene;
         object = objToRender
@@ -35,7 +35,7 @@ loader.load(('static/3DModels/ufo.glb'),
         console.error(error);
     }
 );
-loader.load(('static/3DModels/sci-fi/scene.gltf'),
+loader.load(('static/3DModels/ufo.glb'),
     function (gltf) {
         object = gltf.scene;
         scene.add(gltf.scene);
