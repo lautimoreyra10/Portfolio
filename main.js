@@ -23,6 +23,7 @@ const loader = new GLTFLoader();
 loader.load(('static/3DModels/ufo.glb'),
     function (gltf) {
         object = gltf.scene;
+        object = objToRender
         console.log(object);
         scene.add(gltf.scene);
         animate(); // Llama a animate() después de cargar el modelo
@@ -34,7 +35,7 @@ loader.load(('static/3DModels/ufo.glb'),
         console.error(error);
     }
 );
-loader.load(('static/3DModels/sci-fi.glb'),
+loader.load(('static/3DModels/sci-fi/scene.gltf'),
     function (gltf) {
         object = gltf.scene;
         scene.add(gltf.scene);
@@ -45,10 +46,11 @@ loader.load(('static/3DModels/sci-fi.glb'),
     },
     function (error) {
         console.error(error);
-    }
+    },
 );
+
 const lightShip = new THREE.DirectionalLight(0xffffff, 60);
-lightShip.position.set(0,10,0)
+lightShip.position.set(0, 10, 0)
 lightShip.castShadow = true;
 scene.add(lightShip);
 /* const sphereGeometry = new THREE.SphereGeometry(1);
@@ -75,7 +77,7 @@ function animate() {
     controls.update();
     renderer.render(scene, camera);
 }
-material.receiveShadow = true;
+/* material.receiveShadow = true; */
 window.addEventListener("resize", function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -83,3 +85,31 @@ window.addEventListener("resize", function () {
 });
 
 animate();
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowLeft') {
+        object.position.x += 0.25;
+    } else if (event.key === 'ArrowRight') {
+        object.position.x -= 0.25;
+    } else if (event.key === 'ArrowUp') {
+        object.position.z += 0.25;
+    } else if (event.key === 'ArrowDown') {
+        object.position.z -= 0.25;
+    }
+});
+function checkCollision() {
+    var raycaster = new THREE.Raycaster(object.position, new THREE.Vector3(0, 0, -1));
+    const rayDirectionLeft = new THREE.Vector3(-1, 0, 0);
+    raycaster.set(camera.position, rayDirectionLeft);
+    const rayDirectionRight = new THREE.Vector3(1, 0, 0);
+    raycaster.set(camera.position, rayDirectionRight);
+    const intersects = raycaster.intersectObjects(collidableObjects);
+    var collidableObjects = [object];
+    if (intersects.length > 0) {
+        // Se ha producido una colisión, haz algo aquí
+        const firstIntersectedObject = intersects[0].object;
+        console.log('Colisión con:', firstIntersectedObject);
+    } else {
+
+    }
+}
