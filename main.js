@@ -2,87 +2,94 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-//escena
+// Escena
 const scene = new THREE.Scene();
-// camara
+
+// Cámara
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
-camera.position.y = 1
+camera.position.y = 1;
 camera.fov = 100;
-//variables y constantes
-let object;
+
+// Variables
 let objectShip;
-//Render
-const renderer = new THREE.WebGLRenderer({ alpha: true }); // Alpha: true permite tener background transparente
+let moveDirection = new THREE.Vector3(0,0,0);
+// Render
+const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.getElementById('container3D').appendChild(renderer.domElement);
-// escena
+
+// Escena
 const loader = new GLTFLoader();
 loader.load(('static/3DModels/sci-fi/scene.gltf'),
     function (gltf) {
-        object = gltf.scene;
+        const object = gltf.scene;
         object.rotation.y += Math.PI;
-        scene.add(gltf.scene);
-        animate(); // Llama a animate() después de cargar el modelo
+        scene.add(object);
     },
-    //modelo nave
     loader.load(('static/3DModels/ufo.glb'),
         function (gltf) {
             objectShip = gltf.scene;
+            camera.position.set(0, 1, 3);
+            camera.lookAt(objectShip.position);
             scene.add(gltf.scene);
-            animate(); // Llama a animate() después de cargar el modelo
+            animate();
+            anotherAnimate();
         },
     )
 );
 
-//luces
-const lightShip = new THREE.DirectionalLight(0xffffff, 60);
-lightShip.position.set(0, 10, 0)
+// Luces
+const lightShip = new THREE.DirectionalLight(0xffffff, 4);
+lightShip.position.set(0, 10, 0);
 lightShip.castShadow = true;
 scene.add(lightShip);
 
-const bottomLight = new THREE.DirectionalLight(0xffffff, 1); // color, intensidad
-bottomLight.position.set(0, 0, 0); //top-left-ish
+const bottomLight = new THREE.DirectionalLight(0xffffff, 1);
+bottomLight.position.set(100, 0, 0);
 bottomLight.castShadow = true;
 scene.add(bottomLight);
-//controles camara
-let controls = new OrbitControls(camera, renderer.domElement);
-controls = new OrbitControls(camera, renderer.domElement);
 
-//movimiento
+// Controles cámara
+const controls = new OrbitControls(camera, renderer.domElement);
+
+// Movimiento
 function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-}
-// resize por pantalla
-/* material.receiveShadow = true; */
-window.addEventListener("resize", function () {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
+    if (objectShip) {
+        // Hacer que la cámara siga automáticamente el movimiento de la nave
+        const targetPosition = new THREE.Vector3(objectShip.position.x, objectShip.position.y + 0.25, objectShip.position.z + 3);
+        camera.position.lerp(targetPosition, 0.01);  // Interpolar la posición de la cámara hacia la posición de la nave
 
-let moveDirection = new THREE.Vector3(0, 0, 0);
-animate();
+        // Ajustar la orientación de la cámara hacia la dirección del movimiento
+        const lookAtTarget = new THREE.Vector3(objectShip.position.x + moveDirection.x, objectShip.position.y, objectShip.position.z + moveDirection.z);
+        camera.lookAt(lookAtTarget);
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    requestAnimationFrame(animate);
+}
+
+// Event listeners
 function handleKeyDown(event) {
     switch (event.key) {
         case 'ArrowUp':
-            moveDirection.z = -0.25;
+            moveDirection.z = -1;
             break;
         case 'ArrowDown':
-            moveDirection.z = 0.25;
+            moveDirection.z = 1;
             break;
         case 'ArrowRight':
-            moveDirection.x = 0.25;
+            moveDirection.x = 1;
             break;
         case 'ArrowLeft':
-            moveDirection.x = -0.25;
+            moveDirection.x = -1;
             break;
-
     }
 }
+
 function handleKeyUp(event) {
     switch (event.key) {
         case 'ArrowUp':
@@ -95,30 +102,32 @@ function handleKeyUp(event) {
             break;
     }
 }
+
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('keyup', handleKeyUp);
+
+// Ajustar el tamaño de la ventana
+window.addEventListener('resize', () => {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(newWidth, newHeight);
+});
+
+// Renderizar la escena
 function anotherAnimate() {
     requestAnimationFrame(anotherAnimate);
 
-    objectShip.position.x += moveDirection.x * 0.1;
-    objectShip.position.z += moveDirection.z * 0.1;
+    if (objectShip) {
+        objectShip.position.x += moveDirection.x * 0.1;
+        objectShip.position.z += moveDirection.z * 0.1;
+    }
+
     renderer.render(scene, camera);
 }
-anotherAnimate();
 
-function checkCollision() {
-    const raycaster = new THREE.Raycaster(object.position, new THREE.Vector3(0, 0, -1));
-    const rayDirectionLeft = new THREE.Vector3(-1, 0, 0);
-    raycaster.set(camera.position, rayDirectionLeft);
-    const rayDirectionRight = new THREE.Vector3(1, 0, 0);
-    raycaster.set(camera.position, rayDirectionRight);
-    const intersects = raycaster.intersectObjects(collidableObjects);
-    var collidableObjects = [object];
-    if (intersects.length > 0) {
-        // Se ha producido una colisión, haz algo aquí
-        const firstIntersectedObject = intersects[0].object;
-        console.log('Colisión con:', firstIntersectedObject);
-    } else {
-
-    }
-}
+// Llamada inicial para comenzar la animación
+animate();
