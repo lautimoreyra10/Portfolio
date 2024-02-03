@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // Escena
 const scene = new THREE.Scene();
 
@@ -11,13 +10,14 @@ camera.position.z = 5;
 camera.position.y = 1;
 camera.fov = 100;
 
-// Variables
+// Variables y constantes
 let objectShip;
-let moveDirection = new THREE.Vector3(0,0,0);
+let moveDirection = new THREE.Vector3(0, 0, 0);
+
 // Render
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-
+const controls = new OrbitControls( camera, renderer.domElement );
 document.getElementById('container3D').appendChild(renderer.domElement);
 
 // Escena
@@ -32,7 +32,6 @@ loader.load(('static/3DModels/sci-fi/scene.gltf'),
         function (gltf) {
             objectShip = gltf.scene;
             camera.position.set(0, 1, 3);
-            camera.lookAt(objectShip.position);
             scene.add(gltf.scene);
             animate();
             anotherAnimate();
@@ -51,24 +50,19 @@ bottomLight.position.set(100, 0, 0);
 bottomLight.castShadow = true;
 scene.add(bottomLight);
 
-// Controles cámara
-const controls = new OrbitControls(camera, renderer.domElement);
-
 // Movimiento
 function animate() {
     if (objectShip) {
-        // Hacer que la cámara siga automáticamente el movimiento de la nave
-        const targetPosition = new THREE.Vector3(objectShip.position.x, objectShip.position.y + 0.25, objectShip.position.z + 3);
-        camera.position.lerp(targetPosition, 0.01);  // Interpolar la posición de la cámara hacia la posición de la nave
+        // Actualiza la posición del objeto
+        objectShip.position.x += moveDirection.x * 0.1;
+        objectShip.position.z += moveDirection.z * 0.1;
 
-        // Ajustar la orientación de la cámara hacia la dirección del movimiento
-        const lookAtTarget = new THREE.Vector3(objectShip.position.x + moveDirection.x, objectShip.position.y, objectShip.position.z + moveDirection.z);
-        camera.lookAt(lookAtTarget);
-
-        controls.update();
+        // Hace que la cámara siga automáticamente el movimiento de la nave
+        camera.position.copy(objectShip.position);
+        camera.position.y += 0.75; // Ajusta la altura de la cámara con respecto al objeto
+        camera.position.z += 3;
         renderer.render(scene, camera);
     }
-
     requestAnimationFrame(animate);
 }
 
@@ -76,16 +70,16 @@ function animate() {
 function handleKeyDown(event) {
     switch (event.key) {
         case 'ArrowUp':
-            moveDirection.z = -1;
+            moveDirection.z = -0.25;
             break;
         case 'ArrowDown':
-            moveDirection.z = 1;
+            moveDirection.z = 0.25;
             break;
         case 'ArrowRight':
-            moveDirection.x = 1;
+            moveDirection.x = 0.25;
             break;
         case 'ArrowLeft':
-            moveDirection.x = -1;
+            moveDirection.x = -0.25;
             break;
     }
 }
