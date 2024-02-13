@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "three": "^0.160.0",
+    "three": "^0.160.1",
     "@loaders.gl/gltf": "latest"
   },
   "devDependencies": {
