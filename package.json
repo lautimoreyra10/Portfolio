@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "three": "^0.160.0",
-    "@loaders.gl/gltf": "latest"
+    "@loaders.gl/gltf": "4.0.5"
   },
   "devDependencies": {
     "vite": "^5.0.11"
