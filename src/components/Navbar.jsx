@@ -19,7 +19,8 @@ export default function Navbar() {
       <div className='flex gap-4 text-2xl'>
         <Link to="https://www.instagram.com/lauti_moreyra_/"><FaInstagram className='hover:text-[#e15051]'/></Link>
         <Link to="https://x.com/LautiMoreyra10" target="_blank"><FaTwitter className='hover:text-[#e15051]'/></Link>
-        <Link to=""></Link>
+        <Link to="https://www.linkedin.com/in/lautaro-moreyra/"><FaLinkedin className='hover:text-[#e15051]'/></Link>
+        <Link to="https://github.com/lautimoreyra10"><FaGithub className='hover:text-[#e15051]'/></Link>
       </div>
     </nav>
   )
