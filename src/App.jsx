@@ -1,18 +1,18 @@
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import { AnimatePresence } from 'framer-motion';
+import { Routes, Route, useLocation } from 'react-router-dom'
 import About from './components/About'
-import Projects from './pages/Projects'
+import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
 
 export default function App() {
+  const location = useLocation();
   return (
-    <>
-      <Navbar />
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<About />} />
-        <Route path="/proyectos" element={<Projects />} />
+        <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/contacto" element={<Contact />} />
       </Routes>
-    </>
+    </AnimatePresence>
   )
 }
