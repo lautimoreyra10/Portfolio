@@ -1,18 +1,15 @@
-import { AnimatePresence } from 'framer-motion';
-import { Routes, Route, useLocation } from 'react-router-dom'
-import About from './components/About'
-import Portfolio from './pages/Portfolio'
-import Contact from './pages/Contact'
+import { useState } from "react";
+import About from "./pages/About";
+import Navbar from "./components/Navbar";
 
 export default function App() {
-  const location = useLocation();
+  const [page, setPage] = useState("about");
+
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<About />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/contacto" element={<Contact />} />
-      </Routes>
-    </AnimatePresence>
-  )
+    <>
+      <Navbar onNavigate={(dest) => setPage(dest)} />
+
+      {page === "about" && <About />}
+    </>
+  );
 }
