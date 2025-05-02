@@ -31,9 +31,9 @@ export default function Navbar({ onAboutClick, onPortfolioClick, onContactClick 
 
   return (
     <nav
-      className={`w-full py-4 px-6 fixed top-0 z-50 shadow-xs flex justify-between items-center transition-all duration-300 ${
+      className={`w-full py-4 px-6 fixed top-0 z-50  flex justify-between items-center transition-all duration-300 ${
         scrolled
-          ? "bg-[#f5f4f3]/70 backdrop-blur-md"
+          ? "bg-[#f5f4f3]/70"
           : "bg-[#f5f4f3]"
       } text-[#2f2e2e]`}
     >
